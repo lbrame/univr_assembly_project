@@ -41,6 +41,12 @@ int main(void) {
         scanf("%i", &vettore[i]);
     }
 
+    /*i = 0;
+    while (condizione) {
+        {blocco di codice}
+        i++;
+    }*/
+
     
     
     // stampa menu' testuale con le varie opzioni
