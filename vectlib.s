@@ -7,22 +7,24 @@ Questa libreria contiene le funzioni che servono ad interagire con il vettore.
     txtStvt1:  .asciz "Valori inseriti:\n"
     txtStvt2:  .asciz "Valori inseriti (ordine di inserimento invertito):\n"
     txtStvt3:  .asciz "Valore %i: %i\n"
+    txtFormat: .asciz "%i"
+    txtTest:   .asciz "test riuscito!\n"
+    txtNewLn:  .asciz "\n"
 
 .section .text
     .global stampaVettore
     .global numeroPari
-    .global stampaPos
+    .global cercaValore
 
 # EDX: argomento funzione
 # EAX: return funzione
 # in ebx c'è già $vettore
 # in edi c'è già LUNGHEZZA_VETTORE
-
 stampaVettore:
     test %edx, %edx
     jne stvtInverso
         pushl $txtStvt1
-        call printf
+            call printf
         addl $4, %esp
 
         # for
@@ -90,12 +92,25 @@ numeroPari:
     npEnd:
     ret
 
-# TODO
-stampaPos:
-    # registri permamenti
-    
-    
-    xorl %eax, %eax         # posizione
-    xorl %esi, %esi         # indice
+# %eax: return funzione
+# %ecx: input funzione ("Numero da cercare")
+# %edx: argomento funzione
+# %ebx: vettore
+# %edi: lunghezza del vettore
+cercaValore:
+    xorl %esi, %esi
+    xorl %eax, %eax
     # for
-    
+    cercaFor:
+        cmpl %edi, %esi
+        jge cercaEndSuccess
+
+        cmpl (%ebx,%esi,4), %ecx
+        jz cercaEndSuccess
+
+        incl %esi
+        jmp cercaFor
+
+    cercaEndSuccess:
+        incl %esi
+        ret

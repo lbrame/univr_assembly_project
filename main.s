@@ -4,7 +4,7 @@
     // asciz = ascii "... \0"
     txtInput:    .asciz "Inserimento dei %i interi che compongono il vettore...\n"
     txtInputFor: .asciz "Inserire l'intero in posizione %i: "
-    txtMenu:     .asciz "\nOPERAZIONI DISPONIBILI\n----------------------\n1) stampa a video del vettore inserito\n2) stampa a video del vettore inserito in ordine inverso\n3) stampa il numero di valori pari e dispari inseriti\n4) stampa la posizione di un valore inserito dall'utente\n5) stampa il massimo valore inserito\n6) stampa la posizione del massimo valore inserito\n7) stampa il minimo valore inserito\n8) stampa la posizione del minimo valore inserito\n9) stampa il valore inserito con maggior frequenza\n10) stampa la media intera dei valori inseriti\n"
+    txtMenu:     .asciz "\nOPERAZIONI DISPONIBILI\n----------------------\n1) stampa a video del vettore inserito\n2) stampa a video del vettore inserito in ordine inverso\n3) stampa il numero di valori pari e dispari  pari inseriti\n4) stampa la posizione di un valore inserito dall'utente\n5) stampa il massimo valore inserito\n6) stampa la posizione del massimo valore inserito\n7) stampa il minimo valore inserito\n8) stampa la posizione del minimo valore inserito\n9) stampa il valore inserito con maggior frequenza\n10) stampa la media intera dei valori inseriti\n"
     txtSelect:   .asciz "\nInserire valore operazione (0 uscita, -1 ristampa menu'): "
     txtOpt0:     .asciz "Uscita dall'applicazione...\n"
     txtOpt3even: .asciz "Numero di valori pari inseriti: %i\n"
@@ -24,7 +24,8 @@
     vettore:           .fill 10, 4, 0   # [4bytes = 0]*10
     LUNGHEZZA_VETTORE: .long 10
     opzione:           .long 0   #scanf imposta i valori solo in memoria
- 
+    toSearch:         .long 0
+
     # 0000 | 01 F2 3A 4D
     # 0004 | 42 21 D0 2E
     # 0008 | 06 F2 88 05
@@ -169,6 +170,32 @@ eseguiOpzione:
         incl %eax
         cmpl %eax, opzione
         jne esegui5
+            pushl $txtOpt4sel
+            call printf
+            addl $4, %esp
+            
+            # Che numero vuoi cercare?
+            pushl $toSearch
+            pushl $txtFormat
+            call scanf
+            addl $8, %esp
+
+            xorl %ecx, %ecx
+            movl toSearch, %ecx
+        
+            #GIUSTO FINO A QUI  
+            
+            call cercaValore
+            
+            xorl %ecx, %ecx
+
+            # Stampa
+            pushl %esi                      # posizione effettiva
+            pushl toSearch                  # int che si cerca
+            pushl $txtOpt4pos               # la posizione è:
+            call printf
+            addl $12, %esp
+
         jmp eseguiEnd
 
     esegui5:

@@ -1,0 +1,35 @@
+cercaValore:
+    xorl %eax, %eax         # posizione
+    xorl %ecx, %ecx
+    xorl %edx, %edx
+    xorl %esi, %esi         #2 indice
+                            # edi = lunghezza vettore
+                            # ecx = valore
+    # for
+    ceValFor:
+        cmpl %edi, %esi
+        jz ceValEnd
+
+        // if(vettore[i] = val))
+        // if (%ebx,%esi,4) = edx
+        // if ecx == edx
+        movl (%ebx,%esi,4), %ecx
+        cmpl %ecx, %edx
+        jz ceValFound
+        
+
+        movl (%ebx,%esi,4), %ecx
+        test %ecx, %edx
+        jne ceValFor
+        incl %eax
+
+        incl %esi
+
+    ceValNotFound:
+
+    ceValFound:
+        
+
+    ceValEnd:
+        ret
+    
