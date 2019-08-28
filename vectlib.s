@@ -112,5 +112,5 @@ cercaValore:
         jmp cercaFor
 
     cercaEndSuccess:
-        incl %esi
+        incl %esi 
         ret

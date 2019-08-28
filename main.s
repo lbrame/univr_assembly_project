@@ -181,27 +181,40 @@ eseguiOpzione:
             addl $8, %esp
 
             xorl %ecx, %ecx
-            movl toSearch, %ecx
-        
-            #GIUSTO FINO A QUI  
+            movl toSearch, %ecx 
             
             call cercaValore
             
-            xorl %ecx, %ecx
+            
+            #If per ricerca inconclusiva
+            cercaPrintIf:
+                cmpl $11, %esi
+                jz cercaPrint404
+                jnz cercaPrintSuccess
+            cercaPrint404:
+                pushl %ecx
+                pushl $txtOpt404
+                call printf
+                addl $8, %esp
+                jmp cercaPrintEnd
 
-            # Stampa
-            pushl %esi                      # posizione effettiva
-            pushl toSearch                  # int che si cerca
-            pushl $txtOpt4pos               # la posizione è:
-            call printf
-            addl $12, %esp
-
+            cercaPrintSuccess:
+                # Stampa success
+                pushl %esi                      # posizione effettiva
+                pushl toSearch                  # int che si cerca
+                pushl $txtOpt4pos               # la posizione è:
+                call printf
+                addl $12, %esp
+            cercaPrintEnd:
         jmp eseguiEnd
 
     esegui5:
         incl %eax
         cmpl %eax, opzione
         jne esegui6
+            pushl $txtOpt5
+            call printf
+            addl $4, %esp
         jmp eseguiEnd
 
     esegui6:
