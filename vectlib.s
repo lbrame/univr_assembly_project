@@ -10,11 +10,15 @@ Questa libreria contiene le funzioni che servono ad interagire con il vettore.
     txtFormat: .asciz "%i"
     txtTest:   .asciz "test riuscito!\n"
     txtNewLn:  .asciz "\n"
+    txtLess:   .asciz "less\n"
+    txtEqual:  .asciz "equal\n"
+    txtGreater:.asciz "greater\n"
 
 .section .text
     .global stampaVettore
     .global numeroPari
     .global cercaValore
+    .global maxValue
 
 # EDX: argomento funzione
 # EAX: return funzione
@@ -114,3 +118,34 @@ cercaValore:
     cercaEndSuccess:
         incl %esi 
         ret
+
+# %eax: numero massimo trovato
+# %edx: argomento funzione
+# %ebx: vettore
+# %edi: lunghezza del vettore
+# %esi: contatore array
+maxValue:
+    xorl %esi, %esi
+    xorl %eax, %eax
+    movl (%ebx,%esi,4), %eax
+
+    maxFor:
+        cmpl %edi, %esi
+        jge maxEnd
+
+        cmpl (%ebx,%esi,4), %eax
+        jl maxUpdate
+
+        incl %esi        
+        jmp maxFor
+    
+    #in caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
+    
+    maxUpdate:
+        movl (%ebx,%esi,4), %eax
+        incl %esi
+        jmp maxFor
+
+    maxEnd:
+        ret
+        
