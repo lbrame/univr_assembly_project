@@ -212,7 +212,6 @@ eseguiOpzione:
         incl %eax
         cmpl %eax, opzione
         jne esegui6
-
             call maxValue
 
             pushl %eax            
@@ -226,6 +225,13 @@ eseguiOpzione:
         incl %eax
         cmpl %eax, opzione
         jne esegui7
+
+            call maxValue
+            pushl %edx
+            pushl $txtOpt6
+            call printf
+            addl $8, %esp
+
         jmp eseguiEnd
 
     esegui7:
