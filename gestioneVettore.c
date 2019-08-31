@@ -132,7 +132,7 @@ void eseguiOpzione(int opzione) {
             break;
         case 9:
             valFreq = valoreFrequente();
-            printf("Valore inserito con maggior frequenza: %i\n", valFreq);
+            printf("lu\n", valFreq);
             break;
         case 10:
             media = calcolaMediaIntera();

@@ -16,6 +16,7 @@ Questa libreria contiene le funzioni che servono ad interagire con il vettore.
     .global numeroPari
     .global cercaValore
     .global maxValue
+    .global minValue
 
 
 # EDX: argomento funzione
@@ -147,4 +148,31 @@ maxValue:
         jmp maxFor
 
     maxEnd:
+        ret
+
+
+minValue:
+    xorl %esi, %esi
+    xorl %eax, %eax
+    movl (%ebx,%esi,4), %eax
+
+    minFor:
+        cmpl %edi, %esi
+        jge minEnd
+
+        cmpl (%ebx,%esi,4), %eax
+        jg minUpdate
+
+        incl %esi        
+        jmp minFor
+    
+    #in caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
+    
+    minUpdate:
+        movl (%ebx,%esi,4), %eax
+        incl %esi
+        movl %esi, %edx
+        jmp minFor
+
+    minEnd:
         ret

@@ -227,6 +227,7 @@ eseguiOpzione:
         jne esegui7
 
             call maxValue
+            
             pushl %edx
             pushl $txtOpt6
             call printf
@@ -238,12 +239,28 @@ eseguiOpzione:
         incl %eax
         cmpl %eax, opzione
         jne esegui8
+
+            call minValue
+            
+            pushl %eax
+            pushl $txtOpt7
+            call printf
+            addl $8, %esp
+
         jmp eseguiEnd
 
     esegui8:
         incl %eax
         cmpl %eax, opzione
         jne esegui9
+
+            call minValue
+            
+            pushl %edx
+            pushl $txtOpt8
+            call printf
+            addl $8, %esp
+            
         jmp eseguiEnd
 
     esegui9:
