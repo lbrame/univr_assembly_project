@@ -10,6 +10,26 @@ all:
 	$(AS) $(FLAGS) -o $(F2).o $(F2).s
 	$(AS) $(FLAGS) -o $(F1).o $(F1).s
 	$(LD) -o $(FINAL) $(F2).o $(F1).o $(LINK)
-	
+	./$(FINAL)
+
+norun:
+	$(AS) $(FLAGS) -o $(F2).o $(F2).s
+	$(AS) $(FLAGS) -o $(F1).o $(F1).s
+	$(LD) -o $(FINAL) $(F2).o $(F1).o $(LINK)
+
+nodbnorun:	
+	$(AS) -o $(F2).o $(F2).s
+	$(AS) -o $(F1).o $(F1).s
+	$(LD) -o $(FINAL) $(F2).o $(F1).O $(LINK)
+
+nodebug:
+	$(AS) -o $(F2).o $(F2).s
+	$(AS) -o $(F1).o $(F1).s
+	$(LD) -o $(FINAL) $(F2).o $(F1).O $(LINK)
+	./$(FINAL)
+
+run:
+	./$(FINAL)
+
 clean:
 	rm -f $(F1).o $(F1).x $(F2).o $(F2).x core
