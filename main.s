@@ -92,7 +92,7 @@ _start: #Punto di partenza
     end:
     movl $1, %eax #SYS_EXIT
     movl $0, %ebx #codice di errore (0 = successo)
-    int $0x80    #esegui chiamata di sistema
+    int $0x80     #esegui chiamata di sistema
 
 
 stampaOpzioni:
@@ -267,18 +267,28 @@ eseguiOpzione:
         incl %eax
         cmpl %eax, opzione
         jne esegui10
+
+            call maxValue
+            
             pushl $txtOpt9
             call printf
             addl $4, %esp
+
+
         jmp eseguiEnd
 
     esegui10:
         incl %eax
         cmpl %eax, opzione
         jne eseguiError
-            pushl $txtOpt10
-            call printf
-            addl $4, %esp
+            
+	    call calcolaMediaIntera
+
+	    pushl %eax
+	    pushl $txtOpt10
+        call printf
+        addl $8, %esp
+
         jmp eseguiEnd
     
     eseguiError:
