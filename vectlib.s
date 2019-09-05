@@ -4,15 +4,11 @@ Questa libreria contiene le funzioni che servono ad interagire con il vettore.
 */
 
 .section .data
-    txtStvt1:   	.asciz "Valori inseriti:\n"
-    txtStvt2:   	.asciz "Valori inseriti (ordine di inserimento invertito):\n"
-    txtStvt3:   	.asciz "Valore %i: %i\n"
-    txtFormat:  	.asciz " %i"
-    txtTest:    	.asciz "test riuscito!\n"
-    txtNewLn:   	.asciz "\n"
-    valFreq:            .long 0
-    lunghezza_vettore: 	.word 10	# usato solo se strettamente necessario.
-    coso:		.asciz " X "
+    txtStvt1:   	    .asciz "Valori inseriti:\n"
+    txtStvt2:   	    .asciz "Valori inseriti (ordine di inserimento invertito):\n"
+    txtStvt3:   	    .asciz "Valore %i: %i\n"
+    lunghezza_vettore: 	    .word 10
+    maxFreqStore:           .long 0
 
 .section .text
     .global stampaVettore
@@ -132,6 +128,7 @@ cercaValore:
 maxValue:
     xorl %esi, %esi
     xorl %eax, %eax
+    xorl %edx, %edx
     movl (%ebx,%esi,4), %eax
 
     maxFor:
@@ -144,7 +141,7 @@ maxValue:
         incl %esi        
         jmp maxFor
     
-    #in caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
+    # nel caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
     
     maxUpdate:
         movl (%ebx,%esi,4), %eax
@@ -164,6 +161,7 @@ maxValue:
 minValue:
     xorl %esi, %esi
     xorl %eax, %eax
+    xorl %edx, %edx
     movl (%ebx,%esi,4), %eax
 
     minFor:
@@ -176,7 +174,7 @@ minValue:
         incl %esi        
         jmp minFor
     
-    #in caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
+    # nel caso in cui (%ebx,%esi,4) sia maggiore di %eax, il valore verrà spostato il valore in %eax.
     
     minUpdate:
         movl (%ebx,%esi,4), %eax
@@ -186,64 +184,64 @@ minValue:
 
     minEnd:
         ret
-
-# EAX: Massima frequenza / Valore frequenza (return)
-# EBX: Vettore
-# ECX: Contatore ciclo interno (i2)
-# EDX: Contatore della frequenza
-# ESI: Contatore ciclo esterno (i1)
-# EDI: Lunghezza vettore
-maxFreq:
-    xorl %esi, %esi
-    xorl %eax, %eax
-    xorl %edx, %edx
-
-    //movl (%ebx,%esi,4), %eax
-
-    #for
-    maxFreqForExt:
-        cmpl %edi, %esi
-        jge maxFreqForExtEnd
-
-        xorl %ecx, %ecx
-
-        # confronto per frequenza massima
-        cmpl %eax, %edx
-        jg maxFreqUpdate
-
-        jmp maxFreqForInt
-
-        incl %esi
-        xorl %edx, %edx
-        jmp maxFreqForExt
-        
-        maxFreqUpdate:
-            movl %edx, %eax
-            // movl (%ebx,%esi,4), $valFreq
-
-
-        maxFreqForInt:
-            cmpl %edi, %ecx
-            jge maxFreqForIntEnd
-            
-            //if...
-            // cmpl (%ebx,%esi,4), (%ebx,%ecx,4)
-            je cmpSuccess # incrementa in caso di uguaglianza
     
-            incl %ecx
-            jmp maxFreqForInt # incrementa SOLO in caso di non uguaglianza
+    # commentati sono pushl e popl: funzionano, ma sono ridondanti. Sono stati lasciati commentati
+    # per leggibilità, per lasciare ad intendere che la mansione principale di eax è comunque di essere
+    # un return ma, dato che in questo punto del ciclo eax non viene toccato, verrà sovrascritto e serve
+    # solo per una comparazione, è completamente sicuro utilizzarlo ora.
+    # Ad ogni modo, questo è un caso particolare: in qualsiasi altro caso, sarebbe stato
+    # fondamentale pushare e poppare eax.
+maxFreq:
+    xorl %esi, %esi                     # i1
+    xorl %ecx, %ecx                     # i2
+    xorl %edx, %edx                     # freq
+    xorl %eax, %eax                     # frequenza massima registrata fino ad ora
+    movl $-1, maxFreqStore              # maxFreq = -1
 
-        maxFreqForIntEnd:
-            jmp maxFreqForExt
+    maxFreqForExt:                      # ciclo for esterno
+        cmpl %edi, %esi                 # logica del ciclo
+        jge maxFreqForExtEnd
+        xorl %ecx, %ecx                 # i2 = 0
 
-        cmpSuccess:
-            incl %edx
-            incl %ecx
-            jmp maxFreqForInt
+    maxFreqForInt:                      # ciclo for interno
+        cmpl %edi, %ecx                 # logica del ciclo
+        jge maxFreqForIntEnd
+
+        # confronto
+        # pushl %eax                    # ho finito i registri liberi: "prendo in prestito" edx
+        movl (%ebx,%esi,4), %eax        # sposto il vettore in un registro per paragonarlo
+        cmpl (%ebx,%ecx,4), %eax        # if (vettore[i1] == vettore[i2])
+        jne maxFreqNewEcx               # cicla senza aumentare la frequenza
+        # popl %eax                     # fatto - "rendo" edx
+
+    maxFreqIncFreq:                     # incrementa la frequenza e cicla
+        incl %edx                       # se è arrivato qui, i due vettori sono uguali. freq++
+        incl %ecx                       # i2++
+        jmp maxFreqForInt               # cicla
+    
+    maxFreqNewEcx:
+        # popl %eax                     # "restituisco" eax, anche se la cosa è andata a buon fine
+        incl %ecx                       # i2++
+        jmp maxFreqForInt               # cicla
+
+    maxFreqForIntEnd:
+        cmpl maxFreqStore, %edx         # if freq > maxfreq
+        jg maxFreqUpdate                # aggiorna la massima frequenza con i contenuti di edx
+        jmp maxFreqiplusplus            # else, inizializza la frequenza e cicla tutto
+
+    maxFreqUpdate:
+        # maxFreq = freq
+        movl (%ebx,%esi,4), %eax        # registro volatile, viene azzerato a ogni giro
+        movl %edx, maxFreqStore         # variabile, dove viene tenuto per ora il valore
+
+    maxFreqiplusplus:
+        incl %esi                       # i1++
+        xorl %edx, %edx                 # freq = 0
+        jmp maxFreqForExt               # cicla
 
     maxFreqForExtEnd:
-        movl $valFreq, %eax
         ret
+
 
 # EAX: return
 # EBX: vettore
@@ -261,7 +259,7 @@ calcolaMediaIntera:
         cmpl %edi, %esi
 	    jge calcolaMediaInteraForEnd
     
-	    movl (%ebx,%esi,4), %edx	    
+	movl (%ebx,%esi,4), %edx	    
         addl %edx, %ecx
 
         incl %esi
@@ -271,7 +269,7 @@ calcolaMediaIntera:
         nop
 
     // media = somma/LUNGHEZZA_VETTORE;
-	movl %ecx, %eax
+    movl %ecx, %eax
     cdq
     idivw lunghezza_vettore
     

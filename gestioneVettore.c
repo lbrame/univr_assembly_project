@@ -248,7 +248,7 @@ int valoreFrequente(void) {
 
     for (i1 = 0; i1 < LUNGHEZZA_VETTORE; i1++) {
         for (i2 = 0; i2 < LUNGHEZZA_VETTORE; i2++) {
-            if (vettore[i1] == vettore[i2])
+            if (vettore[i1] /*edx*/ == vettore[i2])
                 freq++;
         }
         if (freq > maxFreq) {

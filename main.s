@@ -268,12 +268,12 @@ eseguiOpzione:
         cmpl %eax, opzione
         jne esegui10
 
-            call maxValue
+            call maxFreq
             
+            pushl %eax
             pushl $txtOpt9
             call printf
-            addl $4, %esp
-
+            addl $8, %esp
 
         jmp eseguiEnd
 
