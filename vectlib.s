@@ -1,6 +1,6 @@
 /*
 VECTLIB.S
-Questa libreria contiene le funzioni che servono ad interagire con il vettore.
+uesta libreria contiene le funzioni che servono ad interagire con il vettore.
 */
 
 .section .data
@@ -130,6 +130,8 @@ maxValue:
     xorl %eax, %eax
     xorl %edx, %edx
     movl (%ebx,%esi,4), %eax
+    incl %esi
+    incl %edx
 
     maxFor:
         cmpl %edi, %esi
@@ -163,6 +165,8 @@ minValue:
     xorl %eax, %eax
     xorl %edx, %edx
     movl (%ebx,%esi,4), %eax
+    incl %esi
+    incl %edx
 
     minFor:
         cmpl %edi, %esi
